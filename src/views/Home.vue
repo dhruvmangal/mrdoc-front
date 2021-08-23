@@ -1,18 +1,50 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header @activeNav="activeNav($event)"/>
+    <Nav v-bind:nav="nav" @closeNav="activeNav($event)"/>
+    <Footer v-bind:active="active" @activeMethos="activeMathod($event)"/>
+    <router-view></router-view>
+
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import Header from '@/components/Header.vue';
+import Nav from '@/components/Nav.vue';
+import Footer from '@/components/Footer.vue';
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    Header,
+    Nav,
+    Footer
+  },
+  data(){
+    return{
+      nav: false,      
+      active: {
+        home: true,
+        search: false,
+        calender: false,
+        notification: false,
+        profile: false
+      }
+    }
+  },
+  methods:{
+    activeNav(val){
+      this.nav = val;
+    },
+    activeMethod(val){
+      this.active= val;
+    }
+  },
+
+  mounted(){
+    if(!localStorage.token){
+      this.$router.push('/login');
+    }
   }
 }
 </script>
