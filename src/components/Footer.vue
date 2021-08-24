@@ -55,6 +55,7 @@
         -webkit-box-shadow: 0px -1px 3px 0px rgba(207,207,207,1);
         -moz-box-shadow: 0px -1px 3px 0px rgba(207,207,207,1);
         box-shadow: 0px -1px 3px 0px rgba(207,207,207,1);
+        z-index: 100;
     }
     .icon{
         font-size: 20px;
