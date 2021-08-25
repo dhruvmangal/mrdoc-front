@@ -69,6 +69,9 @@
         <div v-if="showDel==true">
             <del-meeting @closeDel="del()" @confirmDel="confirmDel()"></del-meeting>
         </div>
+        <div v-if="showReschedule==true">
+            <re-schedule @closeReschedule="()=>{showReschedule= false}" @submitReschedule="submitReschedule($event)"></re-schedule>
+        </div>
         
     </div>
 </template>
@@ -160,11 +163,13 @@ li{
 import moment from 'moment';
 import UpdateMeetingStatus from '@/components/calendar/UpdateStatus.vue';
 import DeleteMeeting from '@/components/calendar/del.vue';
+import Reschedule from '@/components/calendar/Reschedule';
 export default {
     name: 'ShowMeeting',
     components:{
         'update-meeting-status': UpdateMeetingStatus,
-        'del-meeting': DeleteMeeting
+        'del-meeting': DeleteMeeting,
+        're-schedule': Reschedule
     },
     data(){
         return {
@@ -173,7 +178,8 @@ export default {
             id: null,
             err: null,
             showStatus: false,
-            showDel: false
+            showDel: false,
+            showReschedule: false
         }
     },
     mounted(){
@@ -227,7 +233,24 @@ export default {
             console.log('hey')
         },
         reschedule(){
-
+            this.showReschedule = !this.showReschedule;
+        },
+        submitReschedule(val){
+            try{
+                this.axios.put('http://localhost:3000/mr/calander/'+this.id, {
+                    val
+                },{
+                    headers:{token: localStorage.getItem('token')}
+                }).then(res=>{
+                    if(res.data.flag==true){
+                        this.$router.back();
+                    }
+                }).catch(e=>{
+                    this.err =e;
+                })
+            }catch(e){
+                this.err = e;
+            }
         },
         del(){
             console.log('hey'); 
