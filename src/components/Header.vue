@@ -2,7 +2,9 @@
     <div class="container-fluid header">
         <div class="row">
             <div class="col-md-12">
-                <div class="menu-icon" @click="activeNav()">&#x2630;</div>
+
+                <div class="menu-icon" @click="activeNav()" v-if="$route.name !=='CalendarAdd'">&#x2630;</div>
+                <div class="menu-icon" v-if="$route.name =='CalendarAdd'"><i class="fa fa-angle-left" @click="()=>{this.$router.back()}"></i></div>
                 <div class="profile-icon"></div>
             </div>
         </div>
