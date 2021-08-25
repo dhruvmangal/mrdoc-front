@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <div class="add-circle"> <i class="fa fa-plus"></i></div>
+        <div class="add-circle" @click="()=>{this.$router.push('/add-calendar')}"> <i class="fa fa-plus"></i></div>
         <add-date @closeAdd="closeAdd($event)" @submitAdd="addDate($event)" v-if="addState==true" :selectedDate= "selectedDate"></add-date>
     </div>
 </template>
