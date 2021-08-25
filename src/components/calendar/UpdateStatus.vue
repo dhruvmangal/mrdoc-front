@@ -11,28 +11,31 @@
                         <center><span>Update Status</span></center>
                     </div>
                     <div class="body">
-                        <select class="form-control" v-model="status">
-                            <option value="scheduled">Scheduled</option>
-                            <option value="started">Started</option>
-                            <option value="finished">finished</option>
-                            <option value="canceled">Canceled</option>
-                            <option value="rescheduled">Rescheduled</option>
-                            <option :value="other">Other</option>
-                        </select>
-                        <div class="other" v-if="status==null">
-                            <br/>
-                            <label>Enter Status</label>
-                            <input type="text" class="form-control"/>
-                        </div>
-                        <div class="form-item">
-                            <br/>
-                            <label>Enter Message</label>
-                            <textarea class="form-control"></textarea>
-                        </div>
-                        <div class="form-item">
-                            <br/>
-                            <input type="submit" class="btn btn-primary form-control" />
-                        </div>
+                        <form @submit="submit()">
+                            <select class="form-control" v-model="status">
+                                <option value="scheduled">Scheduled</option>
+                                <option value="started">Started</option>
+                                <option value="finished">finished</option>
+                                <option value="canceled">Canceled</option>
+                                <option value="rescheduled">Rescheduled</option>
+                                <option :value="other">Other</option>
+                            </select>
+                            <div class="other" v-if="status==null">
+                                <br/>
+                                <label>Enter Status</label>
+                                <input type="text" class="form-control" v-model="otherStatus"/>
+                            </div>
+                            <div class="form-item">
+                                <br/>
+                                <label>Enter Message</label>
+                                <textarea class="form-control" v-model="message"></textarea>
+                            </div>
+                            <div class="form-item">
+                                <br/>
+                                <input type="submit" class="btn btn-primary form-control" />
+                            </div>
+                        </form>
+                        
                     </div>
 
                 </div>
@@ -79,17 +82,47 @@
 export default {
     name: 'UpdateMeetingStatus',
     props:{
-        meeting_status: String
+        meeting_status: String,
+        id: String
     },
     data(){
         return {
             other: null,
-            status: this.meeting_status
+            status: this.meeting_status,
+            otherStatus: null,
+            message: null,
+            err: null
         }
     },
     methods:{
         closeStatus(){
             return this.$emit('closeStatus', false);
+        },
+        submit(){
+            event.preventDefault();
+            let status = (this.status==null)? this.other: this.status;
+            if(
+                status !== null &&
+                this.message !== null
+            ){
+                try{
+                    this.axios.post('http://localhost:3000/mr/calander/status/'+this.id,{
+                        status: status,
+                        message: this.message
+                    },{
+                        headers:{ token: localStorage.getItem('token')}
+                    }).then(res=>{
+                        if(res.data.flag==true && res.data.id>0){
+                            return this.$emit('closeStatus', false);
+                        }
+                    }).catch(e=>{
+                        this.err = e;
+                    })
+                }
+                catch(e){
+                    this.err =e;
+                }
+            } 
         }
     }
 }
