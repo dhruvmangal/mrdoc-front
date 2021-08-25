@@ -72,7 +72,9 @@
         <div v-if="showReschedule==true">
             <re-schedule @closeReschedule="()=>{showReschedule= false}" @submitReschedule="submitReschedule($event)"></re-schedule>
         </div>
-        
+        <div v-if="showEdit==true">
+            <edit-meeting @closeEdit="edit()" @submitEdit="submitEdit($event)"></edit-meeting>
+        </div>
     </div>
 </template>
 
@@ -164,12 +166,15 @@ import moment from 'moment';
 import UpdateMeetingStatus from '@/components/calendar/UpdateStatus.vue';
 import DeleteMeeting from '@/components/calendar/del.vue';
 import Reschedule from '@/components/calendar/Reschedule';
+import EditMeeting from '@/components/calendar/Edit.vue';
+
 export default {
     name: 'ShowMeeting',
     components:{
         'update-meeting-status': UpdateMeetingStatus,
         'del-meeting': DeleteMeeting,
-        're-schedule': Reschedule
+        're-schedule': Reschedule,
+        'edit-meeting': EditMeeting
     },
     data(){
         return {
@@ -179,7 +184,8 @@ export default {
             err: null,
             showStatus: false,
             showDel: false,
-            showReschedule: false
+            showReschedule: false,
+            showEdit: false
         }
     },
     mounted(){
@@ -230,7 +236,27 @@ export default {
             return moment(date).format("YYYY-MM-DD");
         },
         edit(){
-            console.log('hey')
+            this.showEdit = !this.showEdit;
+        },
+        submitEdit(val){
+            try{
+                this.axios.put('http://localhost:3000/mr/calander/'+this.id,{
+                    val
+                },{
+                    headers:{token: localStorage.getItem('token')}
+                }).then(res=>{
+                    if(res.data.flag==true){
+                        this.showMeeting();
+                        this.showEdit = false;
+                    }
+                    
+                }).catch(e=>{
+                    this.err= e;
+                })
+            }
+            catch(e){
+                this.err =e;
+            }
         },
         reschedule(){
             this.showReschedule = !this.showReschedule;
