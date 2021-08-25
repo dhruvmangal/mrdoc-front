@@ -64,7 +64,7 @@
             </div>
         </div>
         <div v-if="showStatus==true">
-            <update-meeting-status :meeting_status="data.meeting_status" :id="id" @closeStatus="closeStatus($event)"></update-meeting-status>
+            <update-meeting-status :meeting_status="data.meeting_status" :id="id" @closeStatus="closeStatus($event)" @updateStatus="updateStatus($event)"></update-meeting-status>
         </div>
         <div v-if="showDel==true">
             <del-meeting @closeDel="del()" @confirmDel="confirmDel()"></del-meeting>
@@ -231,6 +231,10 @@ export default {
         },
         closeStatus(x) {
             this.showStatus = x;
+        },
+        updateStatus(){
+            this.showStatusInfo();
+            this.showStatus = false;
         },
         ISOToDate(date){
             return moment(date).format("YYYY-MM-DD");

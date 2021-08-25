@@ -113,7 +113,7 @@ export default {
                         headers:{ token: localStorage.getItem('token')}
                     }).then(res=>{
                         if(res.data.flag==true && res.data.id>0){
-                            return this.$emit('closeStatus', false);
+                            return this.$emit('updateStatus', false);
                         }
                     }).catch(e=>{
                         this.err = e;
