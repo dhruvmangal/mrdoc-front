@@ -48,6 +48,12 @@ const routes = [
         props: { search: true }
       },
       {
+        path: '/show-meeting/:id',
+        name: 'ShowMeeting',
+        component: () => import(/* webpackChunkName: "about" */ '../components/calendar/showMeeting.vue'),
+        props: { search: true }
+      },
+      {
         path: '/about',
         name: 'About',
         // route level code-splitting

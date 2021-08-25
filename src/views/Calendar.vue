@@ -14,15 +14,19 @@
             <div class="col-md-12">
                 <div class="show-dates">
                     <div class="header">
-                        This Months Schedule
+                        Schedule of date : {{this.selectedDate}}
                     </div>
                     <div class="body">
-                        <div class="meeting-box" v-for="attr in attributes" :key="attr.key">
+                        <div class="meeting-box" v-for="attr in attributes" :key="attr.key" @click="showMeeting(attr)">
                             <div class="meeting-head">
                                 <span> <i class="fa fa-calendar"></i></span>
                                 {{attr.key}}
                             </div>
                             <div class="meeting-body">
+                                {{attr.dates}}
+
+                                {{attr.time}}
+                                <br/>
                                 {{attr.description}}
                                 <br/>
 
@@ -31,7 +35,6 @@
                                     {{attr.meeting_status}}
                                 </div>
 
-                                <button class="btn btn-success form-control"  v-if="attr.meeting_status">Update Status</button>
                             </div>
                         </div>
                     </div>
@@ -40,7 +43,7 @@
         </div>
 
         <div class="add-circle" @click="()=>{this.$router.push('/add-calendar')}"> <i class="fa fa-plus"></i></div>
-        <add-date @closeAdd="closeAdd($event)" @submitAdd="addDate($event)" v-if="addState==true" :selectedDate= "selectedDate"></add-date>
+        
     </div>
 </template>
 
@@ -105,12 +108,8 @@
 </style>
 
 <script>
-import AddDate from '@/components/calendar/AddDate'
 export default {
     name: 'Calendar',
-    components:{
-        'add-date': AddDate
-    },
     data(){
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -119,7 +118,7 @@ export default {
         today = yyyy + '/' + mm + '/' + dd;
         return{
             addState: false,
-            selectedDate: null,
+            selectedDate: today,
             attributes: [
                 {
                     key: 'today',        
@@ -134,15 +133,28 @@ export default {
     mounted(){
         let date;
         if(this.attributes[0].key == 'today')
-            date = this.attributes[0].dates;
+            date = this.selectedDate;
         
         this.showTodaysMeetings(date);
     },
     methods:{
         dayClicked(day){
             this.selectedDate = day.id;
+            let val = {};
+            val.key = "Selected Date";
+            val.dates = day.id;
+            val.highlight = true;
+            val.color = "red";
+            val.bar = true;
+            this.attributes = this.attributes.filter((row)=>{
+                if(row.key=='today'){
+                    return row;
+                }
+            });
+            this.attributes.push(val);
+            this.showTodaysMeetings(this.selectedDate)
             
-            this.addState = true;
+            
         },
         closeAdd(){
             this.addState = false;
@@ -184,7 +196,9 @@ export default {
                     params: {date: date}
 
                 }).then(res=>{
+                    
                     if(res.data.length>0){
+                        
                         res.data.forEach((d)=>{
                             d.dates = new Date(d.dates);
                             d.highlight= true,
@@ -202,6 +216,12 @@ export default {
                 console.error(e);
             }
             
+        },
+
+        showMeeting(attr){
+            if(attr.id){
+                this.$router.push('/show-meeting/'+attr.id);
+            }
         }
 
     }
