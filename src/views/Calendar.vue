@@ -17,7 +17,7 @@
                         Schedule of date : {{this.selectedDate}}
                     </div>
                     <div class="body">
-                        <div class="meeting-box" v-for="attr in attributes" :key="attr.key">
+                        <div class="meeting-box" v-for="attr in attributes" :key="attr.key" @click="showMeeting(attr)">
                             <div class="meeting-head">
                                 <span> <i class="fa fa-calendar"></i></span>
                                 {{attr.key}}
@@ -43,7 +43,7 @@
         </div>
 
         <div class="add-circle" @click="()=>{this.$router.push('/add-calendar')}"> <i class="fa fa-plus"></i></div>
-        <add-date @closeAdd="closeAdd($event)" @submitAdd="addDate($event)" v-if="addState==true" :selectedDate= "selectedDate"></add-date>
+        
     </div>
 </template>
 
@@ -108,12 +108,8 @@
 </style>
 
 <script>
-import AddDate from '@/components/calendar/AddDate'
 export default {
     name: 'Calendar',
-    components:{
-        'add-date': AddDate
-    },
     data(){
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -220,6 +216,12 @@ export default {
                 console.error(e);
             }
             
+        },
+
+        showMeeting(attr){
+            if(attr.id){
+                this.$router.push('/show-meeting/'+attr.id);
+            }
         }
 
     }
