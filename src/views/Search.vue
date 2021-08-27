@@ -7,24 +7,28 @@
                 <input type="text" name="search" class="form-control search-input" placeholder="Search Doctors">
                 <span class="btn search-icon"><i class="fa fa-search"></i></span>
             </form>
-            <button class="btn filter"><i class="fa fa-filter"></i></button>
+            <button class="btn filter" @click="toggleFilter()"><i class="fa fa-filter"></i></button>
         </div>
         <div class="search-result">
             <div class="result"></div>
+            <div class="search-0-result" v-if="doctors.length==0">
+                Not Found. Please search with different filters
+            </div>
             <div class="search-result-card" v-for="item in doctors" :key="item.id">
                 <div class="profile-pic-panel">
-                    <div class="profile-pic"></div>
+                    <div class="profile-pic" v-if="item.profile==null"></div>
                     <div class="name">{{item.name}}</div>
                     
                 </div>
                 <div class="profile-body">
-                    <div class="beacon"> <i class="fa fa-first-aid"></i> {{item.disease}}</div>
-                    <div class="beacon"> <i class="fa fa-briefcase"></i> {{item.work}}</div>
-                    <div class="beacon"> <i class="fa fa-map-marker"></i> {{item.location}}</div>
+                    <div class="beacon"> <i class="fa fa-first-aid"></i> {{item.category}}</div>
+                    <div class="beacon"> <i class="fa fa-briefcase"></i> {{item.clinic}}</div>
+                    <div class="beacon"> <i class="fa fa-map-marker"></i> {{item.city}}</div>
                 </div>
-                <button class="btn btn-primary btn-more"> <i class="fa fa-info-circle"></i> More</button>
+                
             </div>
         </div>
+        <filter-search v-if="filterFlag==true" @toggleFilter="toggleFilter"></filter-search>
     </div>
 </template>
 
@@ -115,31 +119,41 @@
 </style>
 
 <script>
+import FilterSearch from '@/components/search/Filter.vue';
 export default {
     name: 'Search',
+    components:{
+        'filter-search': FilterSearch
+    },
     data(){
         return{
-            doctors:[{
-                'id': '1',
-                'name': 'Dr Ravindra Gupta',
-                'work': 'SDH Healthcare',
-                'location': 'Mansarovar, Jaipur',
-                'disease': 'General Disease'
-            },
-            {
-                'id': '2',
-                'name': 'Dr Ajay Sharma',
-                'work': 'SDH Healthcare',
-                'location': 'Mansarovar, Jaipur',
-                'disease': 'General Disease'
-            },
-            {
-                'id': '3',
-                'name': 'Dr Deepak singh',
-                'work': 'SDH Healthcare',
-                'location': 'Mansarovar, Jaipur',
-                'disease': 'General Disease'
-            }]
+            err: null,
+            doctors:null,
+            filterFlag: false
+        }
+    },
+    mounted(){
+        this.getDoctors();
+    },
+    methods:{
+        getDoctors(){
+            try{
+                this.axios.get('http://localhost:3000/mr/doctor', {
+                    headers: {token: localStorage.getItem('token')},
+                    params:{}
+                }).then(res=>{
+                    if(res.data.length>0){
+                        this.doctors= res.data
+                    }
+                }).catch(e=>{
+                    this.err = e;
+                })
+            }catch(e){
+                this.err = e;
+            }
+        },
+        toggleFilter(){
+            this.filterFlag = !this.filterFlag;
         }
     }
 }
