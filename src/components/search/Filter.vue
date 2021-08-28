@@ -18,13 +18,40 @@
                             <form>
                                 <div class="form-item" v-for="cat in category" :key="cat.id">
                                     <label><i class="fa fa-list gray"></i> {{cat.category}}</label>
-                                    <input type="checkbox" class="category-radio"/>    
+                                    <input type="checkbox" class="category-radio" @change="()=>{cat.selected = !cat.selected}"/>    
                                 </div>
                                 
                             </form>
                         </div>
                         <div class="item">
+                            <label>State</label>
+                        </div>
+                        <div class="item-form">
+                            <form action="">
+                                <div class="form-item">
+                                    <select class="form-control" v-model="state">
+                                        <option value="Rajasthan"> Rajsthan</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="item">
                             <label>City</label>
+                        </div>
+                        <div class="item-form">
+                            <form action="">
+                                <div class="form-item">
+                                    <select class="form-control" v-model="city">
+                                        <option value="Jaipur"> Jaipur</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+
+
+                        <div class="item-form bottom">
+                            <br/>
+                            <button class="form-control btn btn-success" @click="filter">Filter</button>
                         </div>
                     </div>                    
                 </div>
@@ -65,6 +92,8 @@
     padding: 10px;
     color: black;
     font-size: 18px;
+    position: sticky;
+    top: 20px;
 }
 .body{
     color: black;
@@ -92,6 +121,10 @@
 .category-radio{
     float: right;
 }
+.bottom{
+    position: sticky;
+    bottom: 0px;
+}
 </style>
 
 <script>
@@ -99,7 +132,9 @@ export default {
     name: 'FilterSearch',
     data(){
         return {
-            category: null
+            category: null,
+            state: null,
+            city: null
         }
     },
     mounted(){
@@ -115,7 +150,7 @@ export default {
                     this.category = res.data;
                     localStorage.setItem('category', res.data);
                     this.category.map((cat)=>{
-                        cat.selected= null
+                        cat.selected= false
                     })
                 }).catch(e=>{
                     this.err = e;
@@ -123,6 +158,15 @@ export default {
             }catch(e){
                 this.err =e;
             }
+        },
+
+        filter(){
+            let filter = {};           
+            filter.category = this.category;
+            filter.state = this.state;
+            filter.city = this.city;
+
+            return this.$emit('filter', filter);
         }
     }
 }
