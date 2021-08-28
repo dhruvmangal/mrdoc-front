@@ -16,11 +16,11 @@
             </div>
             <div class="search-result-card" v-for="item in doctors" :key="item.id">
                 <div class="profile-pic-panel">
-                    <div class="profile-pic" v-if="item.profile==null"></div>
-                    <div class="name">{{item.name}}</div>
+                    <div class="profile-pic" v-if="item.profile==null"  @click="showDoctor(item)"></div>
+                    <div class="name"  @click="showDoctor(item)">{{item.name}}</div>
                     <div class="favorite" @click="favorite(item)"><i class="fa fa-heart" :class="{'heart-o': item.favorite, 'heart': !item.favorite}"></i></div>
                 </div>
-                <div class="profile-body">
+                <div class="profile-body"  @click="showDoctor(item)">
                     <div class="beacon"> <i class="fa fa-first-aid"></i> {{item.category}}</div>
                     <div class="beacon"> <i class="fa fa-briefcase"></i> {{item.clinic}}</div>
                     <div class="beacon"> <i class="fa fa-map-marker"></i> {{item.city}}</div>
@@ -201,7 +201,7 @@ export default {
                 filter.city = filters.city;
             if(this.searchName != null)
                 filter.name = this.searchName
-                
+
             try{
                 this.axios.get('http://localhost:3000/mr/doctor',{
                     headers:{ token: localStorage.getItem('token')},
@@ -245,6 +245,10 @@ export default {
                 this.err= e;
             }
             
+        },
+
+        showDoctor(item){
+            this.$router.push('/search/'+item.id)
         }
     }
 }

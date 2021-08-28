@@ -103,7 +103,7 @@ span{
     width:20px;
     height: 20px;
     border-radius: 50%;
-    background-color: black;
+    background-color: #0677B3;
     float: left;
 }
 .status-info{
@@ -115,7 +115,7 @@ span{
     float: left;
     height: 150px;
     width: 2px;
-    background-color: black;
+    background-color: #0677B3;
     position: absolute;
     left: 25px;
     z-index:0;
