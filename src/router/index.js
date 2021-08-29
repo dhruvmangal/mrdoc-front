@@ -36,9 +36,27 @@ const routes = [
         props: { search: true }
       },
       {
+        path: 'search/:id',
+        name: 'ShowDoctor',
+        component:()=> import('../components/search/ShowDoctor.vue'),
+        props: {search: true}
+      },
+      {
         path: '/calendar',
         name: 'Calendar',
         component: () => import(/* webpackChunkName: "about" */ '../views/Calendar.vue'),
+        props: { search: true }
+      },
+      {
+        path: '/add-calendar',
+        name: 'CalendarAdd',
+        component: () => import(/* webpackChunkName: "about" */ '../components/calendar/Add.vue'),
+        props: { search: true }
+      },
+      {
+        path: '/show-meeting/:id',
+        name: 'ShowMeeting',
+        component: () => import(/* webpackChunkName: "about" */ '../components/calendar/showMeeting.vue'),
         props: { search: true }
       },
       {

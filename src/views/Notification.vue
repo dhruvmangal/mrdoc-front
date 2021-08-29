@@ -1,23 +1,25 @@
 <template>
     <div class="notification">
-        <div class="notification-item">
-            <div class="notification-icon"><i class="fa fa-bell"></i></div>
-            <div class="notification-body"> this is a notification</div>
+        <div class="read">
+            <p @click=" markAllRead()">Mark All Read</p>
         </div>
-        <div class="notification-item">
-            <div class="notification-icon"><i class="fa fa-bell"></i></div>
-            <div class="notification-body"> this is a notification</div>
+        <div if="notification.length==0">
+            <center>No new notification for now.</center>
         </div>
-        <div class="notification-item">
+        <div class="notification-item" v-for="notif in notification" :key="notif.id">
             <div class="notification-icon"><i class="fa fa-bell"></i></div>
-            <div class="notification-body"> this is a notification</div>
+            <div class="notification-body">
+                {{notif.message}}
+                <br/>
+                {{notif.date}}, {{notif.time}}
+            </div>
         </div>
     </div>    
 </template>
 
 <style scoped>
     .notification{
-        padding: 50px 10px;
+        padding: 60px 10px;
     }
     .notification-item{
         margin: 10px 0px;
@@ -43,12 +45,63 @@
         width: 80%;
         height: 100%;
     }
-
+    .read{
+        width: 100%;
+        height: 40px;
+        color: blue;
+        margin: 10px 0px;
+    }
+    .read p{
+        float: right;
+    }
 
 </style>
 
 <script>
 export default {
-    name: 'Notification'
+    name: 'Notification',
+    data(){
+        return{
+            notification: null
+        }
+        
+    },
+    mounted(){
+        this.getNotification();
+    },
+    methods:{
+        async getNotification(){
+            try{
+                this.axios.get('http://localhost:3000/mr/notification', {
+                    headers: {token: localStorage.getItem('token')}
+                }).then(res=>{
+                    this.notification = res.data;
+                }).catch(e=>{
+                    this.err = e;
+                })
+            }
+            catch(e){
+                this.err = e;
+            }
+        },
+        markAllRead(){
+            try{
+                this.axios.put('http://localhost:3000/mr/notification', {},{
+                    headers: {token: localStorage.getItem('token')}
+                }).then(res=>{
+                    if(res.data.flag==true){
+                        this.getNotification();
+                    }
+                }).catch(e=>{
+                    this.err = e;
+                })
+            }
+            catch(e){
+                this.err =e;
+            }
+        }
+    },
+
+    
 }
 </script>
