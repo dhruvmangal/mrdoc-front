@@ -21,11 +21,12 @@
                         <div class="beacon-description">{{doctor.city}}</div>
                     </div>
                     <div class="request-panel">
-                        <button class="request-btn btn btn-success form-control">   Request Meeting <i class="fa fa-angle-right"></i> <i class="fa fa-angle-right"></i> </button>
+                        <button class="request-btn btn btn-success form-control" @click="toggleRequest()" :disabled="isDisable">  {{requestBtnHtml}} <i class="fa fa-angle-right"></i> <i class="fa fa-angle-right"></i> </button>
                     </div>
                 </div>
             </div>
         </div>
+        <request-meeting v-if="requestParam==true" @closeRequest="toggleRequest()" @submit="submitRequest($event)"></request-meeting>
     </div>
 </template>
 
@@ -107,13 +108,20 @@
 </style>
 
 <script>
+import Request from '@/components/search/Request';
 export default {
     name: 'ShowDoctor',
+    components:{
+        'request-meeting': Request
+    },
     data(){
         return{
             id: null,
             err: null,
-            doctor: null
+            doctor: null,
+            requestParam:false,
+            requestBtnHtml:  'Request Meeting',
+            isDisable: true
         }
     },
     mounted(){
@@ -138,13 +146,7 @@ export default {
             }
         },
         setFavorite(data){
-            // data.forEach((d)=>{
-            //     if(d.favorite==null){
-            //         d.favorite = false;
-            //     }else{
-            //         d.favorite = true;
-            //     }
-            // });
+         
             if(data.favorite==null){
                 data.favorite  = false
             }else{
@@ -180,6 +182,36 @@ export default {
             }
             
         },
+        toggleRequest(){
+            if(this.requestBtnHtml == 'Request Meeting'){
+                this.requestParam = !this.requestParam;
+            }
+            
+        },
+        submitRequest(val){
+            event.preventDefault();
+
+            try{
+                this.axios.post('http://localhost:3000/mr/request', {
+                    message: val,
+                    doctor_id : this.id
+                },{
+                    headers: {token: localStorage.getItem('token')}
+                }).then((res)=>{
+                    if(res.data.flag==true){
+                        this.toggleRequest();
+                        this.requestBtnHtml = 'Request Submitted';
+                        this.isDisable = false;
+                    }
+                }).catch(e=>{
+                    this.err = e;
+                })
+            }
+            catch(e){
+                this.err =e;
+            }
+        }
+
     }
 }
 </script>
